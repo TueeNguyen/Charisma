@@ -3,7 +3,7 @@
   margin: 0; 
   padding: 0;
   box-sizing: 0;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
 }
 
 .App {
@@ -17,14 +17,40 @@
   height: 100vh;
 }
 
-.App h1 {
+.hero h1 {
   font-size: 72px;
   /* background: linear-gradient(to top, #38abee 0%, #d0dbe0 100%); */
   background: #ffffff;
   font-weight: bold;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  padding: 1em 0 0 0;
+  
+}
+
+.header{
+  width: 80%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* position: absolute; */
+  height: 100px;
+  /* background-color: blue; */
+}
+
+.header h1 {
+  font-size: 88px;
+  /* color: red; */
+}
+
+.header p {
+  /* background-color: red; */
+  /* color: white; */
+  align-self: center;
+}
+
+#blue {
+  color: #a1c4fd;
 }
 
 .search{
@@ -38,6 +64,12 @@
   border-radius: 2px;
   border-style: none;
   width: 80%;
+  font-size: 18px;
+  color:#8e9497;
+}
+
+.search input::placeholder{
+  color:#cfd9df;
 }
 
 .search input:focus{

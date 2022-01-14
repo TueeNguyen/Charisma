@@ -1,38 +1,84 @@
+* {
+  font-family: 'Roboto', sans-serif;
+  margin: 0; 
+  padding: 0;
+  box-sizing: 0;
+  color: rgb(0, 0, 0);
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: column; */
+  width: 100vw;
+  text-align: center;
+  background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+  height: 100vh;
 }
 
-.App-link {
-  color: #61dafb;
+.App h1 {
+  font-size: 72px;
+  /* background: linear-gradient(to top, #38abee 0%, #d0dbe0 100%); */
+  background: #ffffff;
+  font-weight: bold;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 1em 0 0 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search{
+  /* background-color: red; */
+  width: 100%;
+  padding: 2em 0;
+}
+
+.search input{
+  padding: 1em;
+  border-radius: 2px;
+  border-style: none;
+  width: 80%;
+}
+
+.search input:focus{
+  outline: none;
+}
+
+.search button {
+  display: block;
+  margin: 1em auto;
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  border: none;
+  padding: 1em 2em;
+  border-radius: 2px;
+  color: rgb(255, 255, 255);
+  box-shadow: 0px 0px 8px 10px #46464626;
+}
+
+.search button:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 8px 3px #46464626;
+}
+
+.dataView{
+  width: 80%;
+  min-height: 450px;
+  margin: auto;
+  /* background-color: red; */
+  /* border: 1px solid black; */
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  box-shadow: 0px 0px 8px 3px #46464626;
+}
+
+.dataView p {
+  font-size: 40px;
+  color: rgb(179, 179, 179);
+  background-image: linear-gradient(to top, #cfd9df 0%, #bac2c7 100%);
+  font-weight: bold;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

@@ -105,8 +105,6 @@ function App() {
         </div>
       </section>
 
-      
-      
       <section className="legend">
         <h1>What your result means:</h1>
         <p>
@@ -121,14 +119,21 @@ function App() {
         {/* Purchase within 1 week of launch 
         Number of NFTs purchased within 1 week of launch / total number of NFTs.  If > 20%, then Early OG. */}
         <span className="big">S/B</span> - Small Project Supporter | Bluechip Project Shark   🔵
-        <br />
+        
         {/* Assumption - The greater than trade volume, the more established the project.
         Do you own any indie NFTs right now? 
         Threshold - 2000 Eth all time trade volume
         Number of small project NFTs / total number of NFTs.  If greater than 50%, then Small Project Support */}
         </p>
+
+        <button className='info'>How are these values determined?</button>
       </section>
 
+      <footer className="footer">
+
+        <p>{"Developed with <3 By Joyce, Lexi, Dave, Tue & Alex at NFTHack2022"}</p>
+
+      </footer>
     </div>
   );
 }

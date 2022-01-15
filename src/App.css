@@ -82,7 +82,7 @@ html, body, #root {
   padding: 1em;
   border-radius: 2px;
   border-style: none;
-  width: 80%;
+  width: 60%;
   font-size: 18px;
   color:#8e9497;
 }
@@ -95,7 +95,7 @@ html, body, #root {
   outline: none;
 }
 
-.search button {
+button {
   display: block;
   margin: 1em auto 0 auto;
   background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
@@ -108,7 +108,7 @@ html, body, #root {
   font-size: 48px;
 }
 
-.search button:hover {
+button:hover {
   cursor: pointer;
   box-shadow: 0px 0px 8px 3px #46464626;
 }
@@ -189,22 +189,17 @@ html, body, #root {
 }
 
 .legend{
-  width: 80%;
-  min-height: 470px;
-  margin: auto;
-  padding: 5rem 0 0 0;
-  /* background-color: red; */
-  /* border: 1px solid black; */
+  width: 60%;
+  min-height: 400px;
+  margin: 0 auto 2rem auto;
+  padding: 3rem 0 0 0;
   border-radius: 3px;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
   background-color: #fff;
   box-shadow: 0px 0px 8px 3px #46464626;
   transition: all 1s ease;
   -webkit-text-fill-color: black;
+  padding-bottom: 3em;
 }
-
 
 .legend h1 {
   font-size: 64px;
@@ -214,4 +209,21 @@ html, body, #root {
   font-size: 24px;
   -webkit-text-fill-color:rgb(124, 124, 124);
   line-height: 60px;
+}
+
+.legend .info {
+  font-size: 30px;
+  -webkit-text-fill-color: white;
+  /* padding: 1rem; */
+  margin: auto;
+  border-radius: 3px;
+  width: 50%;
+  background-color: #a1c4fd;
+}
+
+.footer{
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

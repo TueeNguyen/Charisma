@@ -17,14 +17,21 @@ async def root():
 
 @app.get("/address/{walletAddress}", response_class=JSONResponse)
 async def get_data(walletAddress):
+    walletAddress=walletAddress.lower()
+
+    result_D_or_P = getDorP(walletAddress)
+    result_O_or_U = getOorU(walletAddress)
+    result_E_or_C = getEorC(walletAddress)
+    result_S_or_B = getSorB(walletAddress)
+
     json_data = {
         "message": "",
         "walletAddress":walletAddress,
         "dimensions":{
-            "D_or_P": getDorP(walletAddress),
-            "O_or_U": getOorU(walletAddress),
-            "E_or_C": getEorC(walletAddress),
-            "S_or_B": getSorB(walletAddress),
+            "D_or_P": result_D_or_P,
+            "O_or_U": result_O_or_U,
+            "E_or_C": result_E_or_C,
+            "S_or_B": result_S_or_B,
         }
     }
     return JSONResponse(content=json_data)
@@ -44,18 +51,23 @@ def getDorP(walletAddress):
             buyCount+=1
 
     transactionCount = buyCount + sellCount
-    diamondHandMetric = sellCount / buyCount
+    
+    if buyCount > 0:
+        diamondHandMetric = sellCount / buyCount
+        if diamondHandMetric < 0.3:
+            value="D"
+        else:
+            value="P"
 
-    if diamondHandMetric < 0.3:
-        value="D"
-    else:
-        value="P"
-
-    userMessage = \
+        userMessage = \
         f"We analyzed {transactionCount} ERC721 transacations on Etherscan. " \
         f"You had {buyCount} incoming transaction(s) and {sellCount} outgoing transaction(s). " \
         f"Outgoing Transaction Count / Incoming Transaction Count = {diamondHandMetric:.0%}. " \
-        f"If this is under 30% you're considered Diamond Hands! "
+        f"If this is under 30% you're considered Diamond Hands! "    
+    else:
+        diamondHandMetric = 0
+        value="X"
+        userMessage = "No NFTs in provided address."    
 
     return {"value":value, "description": userMessage}
 
@@ -94,18 +106,25 @@ def getSorB(walletAddress):
         #print(blueChipCount,smallProjectCount)
 
     totalProjectCount = blueChipCount + smallProjectCount
-    smallProjectMix = smallProjectCount / totalProjectCount
-    #print(smallProjectMix)
-    if smallProjectMix > mixCutoff:
-        value="S"
-    else:
-        value="B"
 
-    userMessage = \
+    if totalProjectCount > 0:
+        smallProjectMix = smallProjectCount / totalProjectCount
+        
+        if smallProjectMix > mixCutoff:
+            value="S"
+        else:
+            value="B"
+        
+        userMessage = \
         f"Based on Opensea, you are currently particpating in {smallProjectCount} " \
         f"small projects with total transaction volume < 2,000 ETH. " \
         f"You are participating in {totalProjectCount} total projects. " \
-        f"Small Project mix: {smallProjectMix:.0%}. >50% small project mix is required " \
+        f"Small Project mix: {smallProjectMix:.0%}. > 50% small project mix is required " \
         f"to be a small project supporter."
+
+    else:
+        smallProjectMix = 0
+        value = "X"
+        userMessage = "No NFTs in provided address."    
 
     return {"value":value, "description": userMessage}

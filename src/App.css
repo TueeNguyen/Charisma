@@ -9,6 +9,9 @@
 i{
   padding-right: 2px;
 }
+html{
+  scroll-behavior: smooth;
+}
 
 html, body, #root {
   height: 100%;
@@ -29,7 +32,7 @@ html, body, #root {
 }
 
 .hero h1 {
-  font-size: 72px;
+  font-size: 120px;
   /* background: linear-gradient(to top, #38abee 0%, #d0dbe0 100%); */
   /* background: #ffffff; */
   /* font-weight: bold;
@@ -37,7 +40,10 @@ html, body, #root {
   -webkit-text-fill-color: transparent; */
   text-shadow: 2px 2px 1px #a1c4fd;
   
-  
+}
+
+.hero p{
+  font-size: 40px;
 }
 
 .header{
@@ -229,7 +235,7 @@ button:hover {
 }
 
 .explanation{
-  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);;
+  background-image: linear-gradient(to top, #f0f0f0 0%, #ffffff 100%);;
   position: absolute;
   top: 0;
   left: 1em;
@@ -244,8 +250,10 @@ button:hover {
   flex-direction: column;
   border-radius: 3px;
   -webkit-text-fill-color: black;
-  transition: all 1s ease;
+  transition: all 0.3s ease;
   box-shadow: 0px 0px 8px 3px #46464626;
+  scroll-snap-type: mandatory;
+  
   /* overflow-y: scroll; */
 }
 

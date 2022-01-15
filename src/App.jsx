@@ -131,7 +131,7 @@ function App() {
         Number of small project NFTs / total number of NFTs.  If greater than 50%, then Small Project Support */}
         </p>
 
-        <button className='info' onClick={handleMoreInfoClick}>How are these values determined?</button>
+        <button className='info' onClick={handleMoreInfoClick} href=".explanation">How are these values determined?</button>
       </section>
 
       <footer className="footer">

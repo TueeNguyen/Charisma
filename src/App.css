@@ -113,19 +113,22 @@ html, body, #root {
   box-shadow: 0px 0px 8px 3px #46464626;
 }
 
-.dataView{
-  width: 80%;
-  min-height: 470px;
-  margin: auto;
+
+
+.present{
   /* background-color: red; */
-  /* border: 1px solid black; */
-  border-radius: 3px;
+  width: 50%;
+  min-height: 288px;
+  margin: auto;
   display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  box-shadow: 0px 0px 8px 3px #46464626;
-  transition: all 1s ease;
+  margin-bottom: 3rem;
+}
+.present h1 {
+  /* opacity: 0; */
+  font-size: 80px;
+  transition: all 0.2s ease;
 }
 
 .data {
@@ -136,39 +139,79 @@ html, body, #root {
   /* background-clip: text; */
   /* -webkit-text-fill-color: transparent; */
   /* background-color: orange; */
-  width: 80%;
+  width: 30%;
+  /* background-color: red; */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 1rem; 
 }
 
 .letterCard{
-  width: 100%;
-  box-shadow: 0 0 8px 3px #46464626;
+  /* width: 25%; */
+  box-shadow: 0 0 3px 3px #00000026;
   border-radius: 3px;
-  margin: 1rem 0;
+  margin: .5rem 0;
   transition: all 1s ease;
+  background-color: #fff;
+  
 }
 
 .letter{
   font-size: 80px;
   text-align: left;
-  padding: 0 0 0 1rem;
+  padding: 1rem;
   /* background-color: red; */
   -webkit-text-fill-color: #a1c4fd;
   display: flex;
   align-items: flex-end;
   /* background-color: red; */
+  text-align: center;
 }
 
 .attribute{
   width: 50px;
+  align-self: center;
+  margin: auto;
+  
 }
 
 .letter p {
   font-size: 15px;
-  padding: 0 0 1.1rem 1rem;
+  padding: 1rem;
   -webkit-text-fill-color: black;
+  
 }
 
 .hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.legend{
+  width: 80%;
+  min-height: 470px;
+  margin: auto;
+  padding: 5rem 0 0 0;
+  /* background-color: red; */
+  /* border: 1px solid black; */
+  border-radius: 3px;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  background-color: #fff;
+  box-shadow: 0px 0px 8px 3px #46464626;
+  transition: all 1s ease;
+  -webkit-text-fill-color: black;
+}
+
+
+.legend h1 {
+  font-size: 64px;
+}
+
+.legend p {
+  font-size: 24px;
+  -webkit-text-fill-color:rgb(124, 124, 124);
+  line-height: 60px;
 }

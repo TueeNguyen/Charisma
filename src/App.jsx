@@ -59,14 +59,13 @@ function App() {
   }
   
   const handleClick = () => {
-      setWpi('DOEI')
+      setWpi('DOES')
       setClicked(true)
       setTimeout(() => {
         console.log('unhiding cards', hidden)
         setHidden(false)
         
       }, 1000)
-      
   }
 
   useEffect(connectMetaMask, [])
@@ -81,29 +80,53 @@ function App() {
       
       <section className="hero">
         <h1>Charisma</h1>
-        <p>How do <i>you </i> translate into the metaverse?</p>
+        <p>What does your wallet say about <i>you</i>?</p>
       </section>
-      
 
       <section className="search">
         <input type="text" placeholder="Wallet address here..."/>
-        <button onClick={handleClick}>{clicked ? 'Analyzing...' : 'Analyze'}</button>
+        <button onClick={handleClick}>{clicked ? 'Analyzed!' : 'Analyze'}</button>
       </section>
-      
-      <section className="dataView">
+
+      <section className="present">
+        <h1 className={!clicked ? 'hidden' : ''}>You are a... </h1>
         <div className="data">
           {/* Insights will show up here... */}
           {wpi.split("").map((e, index) => {
             return (
               <div className={hidden ? 'letterCard hidden' : 'letterCard'} key={index}>
-                <div className="letter " >
+                <div className="letter" >
                   <div className='attribute'>{e}</div>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos fuga, consectetur natus aperiam nesciunt inventore.</p>
+                  {/* <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos fuga, consectetur natus aperiam nesciunt inventore.</p> */}
                 </div>
               </div>
             )
           })}
         </div>
+      </section>
+
+      
+      
+      <section className="legend">
+        <h1>What your result means:</h1>
+        <p>
+        <span className="big">D/P</span> - Diamond Hands Connoisseur 💎| Paper Hands Trader Money Bags 🏦
+        <br />
+        {/* If (number of out transactions / number of in transactions) is less than 30%, then Diamond Hands. */}
+        <span className="big">O/U</span> - Outperforming Index 📈 | Underperforming Index 📉
+        <br />
+        {/* (Sum of the 7 day average sale price of the NFTs currently in the wallet) - (Sum of the purchase price of the NFTs currently in wallet.) / Sum of the purchase price of the NFTs currently in wallet. → compare it with the change in ETH price over the same time period. */}
+        <span className="big">E/C</span> - Early OG 🌅 | Crowd Follower 🦶🏽
+        <br />
+        {/* Purchase within 1 week of launch 
+        Number of NFTs purchased within 1 week of launch / total number of NFTs.  If > 20%, then Early OG. */}
+        <span className="big">S/B</span> - Small Project Supporter | Bluechip Project Shark   🔵
+        <br />
+        {/* Assumption - The greater than trade volume, the more established the project.
+        Do you own any indie NFTs right now? 
+        Threshold - 2000 Eth all time trade volume
+        Number of small project NFTs / total number of NFTs.  If greater than 50%, then Small Project Support */}
+        </p>
       </section>
 
     </div>

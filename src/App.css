@@ -227,3 +227,45 @@ button:hover {
   align-items: center;
   justify-content: center;
 }
+
+.explanation{
+  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);;
+  position: absolute;
+  top: 0;
+  left: 1em;
+  right: 0;
+  width: 60%;
+  height: 80%;
+  margin: 10% auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* text-align: left; */
+  flex-direction: column;
+  border-radius: 3px;
+  -webkit-text-fill-color: black;
+  transition: all 1s ease;
+  box-shadow: 0px 0px 8px 3px #46464626;
+  /* overflow-y: scroll; */
+}
+
+.explanation .wrapper {
+  text-align: left;
+}
+
+.explanation .wrapper h1 {
+  font-size: 60px;
+  margin-bottom: 3rem;
+}
+
+.explanation .wrapper h2 {
+  font-size: 30px;
+}
+
+.explanation .wrapper p {
+  margin-bottom: 3rem;
+}
+
+.explanation .wrapper button {
+  -webkit-text-fill-color: #fff;
+}

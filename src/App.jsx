@@ -32,6 +32,7 @@ function App() {
   let [wpi, setWpi] = useState('')
   let [clicked, setClicked] = useState(false)
   let [hidden, setHidden] = useState(true)
+  let [showExplanation, setShowExplanation] = useState(false)
 
   const truncateAccount = (addressList) => {
     let str = addressList.split("")
@@ -66,6 +67,10 @@ function App() {
         setHidden(false)
         
       }, 1000)
+  }
+
+  const handleMoreInfoClick = () => {
+    setShowExplanation(!showExplanation)
   }
 
   useEffect(connectMetaMask, [])
@@ -126,7 +131,7 @@ function App() {
         Number of small project NFTs / total number of NFTs.  If greater than 50%, then Small Project Support */}
         </p>
 
-        <button className='info'>How are these values determined?</button>
+        <button className='info' onClick={handleMoreInfoClick}>How are these values determined?</button>
       </section>
 
       <footer className="footer">
@@ -134,6 +139,23 @@ function App() {
         <p>{"Developed with <3 By Joyce, Lexi, Dave, Tue & Alex at NFTHack2022"}</p>
 
       </footer>
+
+      <section className={showExplanation ? "explanation" : "explanation hidden"}>
+        <div className="wrapper">
+          
+          <h1>How your results are Calculated</h1>
+          <h2>Diamond Hands / Paper Hands:</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <h2>Outperforming Index / Underperforming Index:</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <h2>Early OG / Crowd Follower:</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <h2>Small Project Supporter / Bluechip Shark:</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <button onClick={handleMoreInfoClick}>close</button>
+        </div>
+        
+      </section>
     </div>
   );
 }

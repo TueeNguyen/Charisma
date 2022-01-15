@@ -46,23 +46,23 @@ def getTransactions(walletAddress):
     buyCount = 0
     
     for transaction in result['result']:
-        print(transaction['from'])
         if transaction['from']==walletAddress:
             sellCount+=1
         if transaction['to']==walletAddress:
             buyCount+=1
 
-    transactionCount = buyCount+sellCount
+    transactionCount = buyCount + sellCount
+    diamondHandMetric = sellCount / buyCount
 
-    if buyCount > sellCount:
+
+    if diamondHandMetric < 0.3:
         value="D"
     else:
         value="P"
 
-    userMessage = f"""We analyzed {transactionCount} ERC721 transacations on Etherscan. You had {buyCount} incoming transactions and {sellCount} outgoing transactions."""
-    
+    userMessage = f"""We analyzed {transactionCount} ERC721 transacations on Etherscan. You had {buyCount} incoming transactions and {sellCount} outgoing transactions.
+    Outgoing Transaction Count / Incoming Transaction Count = {diamondHandMetric:.2%}. If this is under 30% you're considered Diamond Hands!"""
 
-    print(buyCount, sellCount)
     return {"value":value, "description": userMessage}
 
 

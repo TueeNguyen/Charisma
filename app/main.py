@@ -1,6 +1,7 @@
 import requests
 import json
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
@@ -9,6 +10,17 @@ from app.openseaAPI import getWalletNFTs, getNFTData, getFloorPriceForNTF, getCo
 
 
 app = FastAPI()
+
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
@@ -109,7 +121,7 @@ def getSorB(walletAddress):
 
     if totalProjectCount > 0:
         smallProjectMix = smallProjectCount / totalProjectCount
-        
+
         if smallProjectMix > mixCutoff:
             value="S"
         else:

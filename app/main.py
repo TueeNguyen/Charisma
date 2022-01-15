@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
 from app.etherscanAPI import getERC721Transactions
+from app.openseaAPI import getWalletNFTs, getNFTData, getFloorPriceForNTF, getCollectionsInWallet
+
 
 app = FastAPI()
 
@@ -44,14 +46,16 @@ def getDorP(walletAddress):
     transactionCount = buyCount + sellCount
     diamondHandMetric = sellCount / buyCount
 
-
     if diamondHandMetric < 0.3:
         value="D"
     else:
         value="P"
 
-    userMessage = f"""We analyzed {transactionCount} ERC721 transacations on Etherscan. You had {buyCount} incoming transactions and {sellCount} outgoing transactions.
-    Outgoing Transaction Count / Incoming Transaction Count = {diamondHandMetric:.2%}. If this is under 30% you're considered Diamond Hands!"""
+    userMessage = \
+        f"We analyzed {transactionCount} ERC721 transacations on Etherscan. " \
+        f"You had {buyCount} incoming transaction(s) and {sellCount} outgoing transaction(s). " \
+        f"Outgoing Transaction Count / Incoming Transaction Count = {diamondHandMetric:.0%}. " \
+        f"If this is under 30% you're considered Diamond Hands! "
 
     return {"value":value, "description": userMessage}
 
@@ -71,7 +75,37 @@ def getEorC(walletAddress):
 
 
 def getSorB(walletAddress):
-    value = 'S'
-    userMessage = f"""Enter text description here"""
+    cutoff = 2000
+    mixCutoff = 0.3
+    result = getCollectionsInWallet(walletAddress)
+
+    blueChipCount = 0
+    smallProjectCount = 0
+    
+    for collection in result:
+        if collection['stats']['total_volume'] > cutoff:
+            collectionType='Bluechip'
+            blueChipCount+=1
+        else:
+            collectionType='Small Project'
+            smallProjectCount+=1
+
+        #print(collection['name'],'- Total Volume',collection['stats']['total_volume'], collectionType)
+        #print(blueChipCount,smallProjectCount)
+
+    totalProjectCount = blueChipCount + smallProjectCount
+    smallProjectMix = smallProjectCount / totalProjectCount
+    #print(smallProjectMix)
+    if smallProjectMix > mixCutoff:
+        value="S"
+    else:
+        value="B"
+
+    userMessage = \
+        f"Based on Opensea, you are currently particpating in {smallProjectCount} " \
+        f"small projects with total transaction volume < 2,000 ETH. " \
+        f"You are participating in {totalProjectCount} total projects. " \
+        f"Small Project mix: {smallProjectMix:.0%}. >50% small project mix is required " \
+        f"to be a small project supporter."
 
     return {"value":value, "description": userMessage}

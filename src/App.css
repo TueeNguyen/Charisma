@@ -6,24 +6,37 @@
   color: rgb(255, 255, 255);
 }
 
+i{
+  padding-right: 2px;
+}
+
+html, body, #root {
+  height: 100%;
+  
+}
+
 .App {
   /* display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column; */
   width: 100vw;
+  min-height: 100%;
   text-align: center;
   background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
-  height: 100vh;
+  background-repeat: no-repeat;
+  
 }
 
 .hero h1 {
   font-size: 72px;
   /* background: linear-gradient(to top, #38abee 0%, #d0dbe0 100%); */
-  background: #ffffff;
-  font-weight: bold;
+  /* background: #ffffff; */
+  /* font-weight: bold;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; */
+  text-shadow: 2px 2px 1px #a1c4fd;
+  
   
 }
 
@@ -47,6 +60,12 @@
   /* background-color: red; */
   /* color: white; */
   align-self: center;
+  font-size: 25px;
+  text-shadow: 2px 2px 1px #a1c4fd;
+}
+
+.header p:hover {
+  cursor: pointer;
 }
 
 #blue {
@@ -81,7 +100,8 @@
   margin: 1em auto 0 auto;
   background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   border: none;
-  padding: 1rem 4rem;
+  padding: 1rem 0;
+  width: 23.75rem;
   border-radius: 2px;
   color: rgb(255, 255, 255);
   box-shadow: 0px 0px 8px 10px #46464626;
@@ -95,7 +115,7 @@
 
 .dataView{
   width: 80%;
-  min-height: 450px;
+  min-height: 470px;
   margin: auto;
   /* background-color: red; */
   /* border: 1px solid black; */
@@ -105,13 +125,50 @@
   justify-content: center;
   background-color: #fff;
   box-shadow: 0px 0px 8px 3px #46464626;
+  transition: all 1s ease;
 }
 
-.dataView p {
+.data {
   font-size: 40px;
   color: rgb(179, 179, 179);
-  background-image: linear-gradient(to top, #cfd9df 0%, #bac2c7 100%);
+  /* background-image: linear-gradient(to top, #cfd9df 0%, #bac2c7 100%); */
   font-weight: bold;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* background-clip: text; */
+  /* -webkit-text-fill-color: transparent; */
+  /* background-color: orange; */
+  width: 80%;
+}
+
+.letterCard{
+  width: 100%;
+  box-shadow: 0 0 8px 3px #46464626;
+  border-radius: 3px;
+  margin: 1rem 0;
+  transition: all 1s ease;
+}
+
+.letter{
+  font-size: 80px;
+  text-align: left;
+  padding: 0 0 0 1rem;
+  /* background-color: red; */
+  -webkit-text-fill-color: #a1c4fd;
+  display: flex;
+  align-items: flex-end;
+  /* background-color: red; */
+}
+
+.attribute{
+  width: 50px;
+}
+
+.letter p {
+  font-size: 15px;
+  padding: 0 0 1.1rem 1rem;
+  -webkit-text-fill-color: black;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
 }

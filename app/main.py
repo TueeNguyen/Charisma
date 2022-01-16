@@ -6,8 +6,9 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse
 from datetime import datetime, date
 
-from app.etherscanAPI import getERC721Transactions, getHistoricalEthPrice, getCurrentEthPrice
+from app.etherscanAPI import getERC721Transactions, getCurrentEthPrice
 from app.openseaAPI import getWalletNFTs, getNFTData, getCollectionsInWallet
+from app.coinGeckoAPI import getHistoricalEthPrice
 from app.config import opensea_key
 
 app = FastAPI()
@@ -113,8 +114,10 @@ def getOorU(walletAddress):
     
     #This is an EtherScan API PRO Call, we need to replace with something else, currently using Current Price as Placeholder
     #ethPriceAtTimeOfFirstMintResponse = getHistoricalEthPrice(startDate=earliestNFTInWalletTimeStamp.date(), currentDate=currentDate)
-    ethPriceAtTimeOfFirstMintResponse = getCurrentEthPrice()
-    ethPriceAtTimeOfFirstMint = float(ethPriceAtTimeOfFirstMintResponse['result']['ethusd'])
+    earliestDateString = str(earliestNFTInWalletTimeStamp.date().strftime("%d-%m-%Y"))
+    ethPriceAtTimeOfFirstMintResponse = getHistoricalEthPrice(dateString = earliestDateString)
+    ethPriceAtTimeOfFirstMint = float(ethPriceAtTimeOfFirstMintResponse)
+    #float(ethPriceAtTimeOfFirstMintResponse['result']['ethusd'])
     
     currentEthPriceResponse = getCurrentEthPrice()
     currentEthPrice = float(currentEthPriceResponse['result']['ethusd'])
@@ -192,7 +195,7 @@ def getEorC(walletAddress):
             value = 'C'
             userMessage = returned_collections
         else:
-            value = 'X'
+            value = 'E'
             userMessage = 'I don\'t know if you\'re E or C'
 
     return {"value":value, "description": userMessage}

@@ -20,6 +20,7 @@ function App() {
   let [message, setMessage] = useState('')
   let [metaMaskAddress, setMetaMaskAddress] = useState('')
   let [stateContract, setStateContract] = useState(null)
+  let [minted, setMinted] = useState(false)
 
   const truncateAccount = (addressList) => {
     
@@ -77,6 +78,7 @@ function App() {
   const loadBlockChainData = async () => {
     if(!window.ethereum)
       alert('No ethereum client detected, try MetaMask!')
+
     const web3 = new Web3(Web3.givenProvider)
     let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     let user = accounts[0]
@@ -104,6 +106,8 @@ function App() {
   const mint = async () => {
     if(stateContract){
       await stateContract.methods.mint(wpi).send({from: metaMaskAddress})
+      console.log('Minted!')
+      setMinted(true)
     }
   }
 
@@ -131,11 +135,14 @@ function App() {
   }
 
   const handleMetaMaskClick = () => {
-    if(!window.ethereum)
+    //console.log(metaMaskAddress)
+    if(!metaMaskAddress)
       loadBlockChainData()
-    else
+    else{
       navigator.clipboard.writeText(metaMaskAddress);
       alert('Address Copied')
+    }
+      
   }
 
   useEffect(() => {
@@ -184,7 +191,7 @@ function App() {
             )
           })}
         </div>
-        <button className={hidden ? "mint hidden" : "mint"} onClick={mint}>Mint as NFT</button>
+        <button className={hidden ? "mint hidden" : minted ? 'mint blocked' : 'mint '} disabled={minted} onClick={mint}>Mint as NFT</button>
       </section>
 
       <section className="legend">

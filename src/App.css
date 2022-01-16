@@ -25,7 +25,8 @@ html, body, #root {
   flex-direction: column; */
   min-height: 100%;
   text-align: center;
-  background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+  /* background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); */
+  background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
   background-repeat: no-repeat;
   
 }
@@ -187,6 +188,10 @@ button:hover {
   padding: 1rem;
   -webkit-text-fill-color: black;
   
+}
+
+.mint{
+  margin: 2rem;
 }
 
 .hidden {

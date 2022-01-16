@@ -1,30 +1,12 @@
 
 import './App.css';
-// import Web3 from 'web3';
+import Web3 from 'web3';
 import React, { useState, useEffect } from 'react'
+import CharismaNFT from './abi/CharismaNFT.json'
 const axios = require('axios').default
 
 
-
-
-//const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/c5cd7d6606b14d1b890801407356df7b:8545'))
-
-// [NAME] is a tool that analyzes your personality through your NFT holdings and onchain activity.
-
-// Introducing the Wallet Personality Indicator, the “WPI.”  Similar to the Myers-Briggs personality test, the WPI describes the personality attributes of a wallet, and therefore the personality of the wallet owner.
-
-// We have identified the following wallet personality traits:
-// D/P - Diamond Hands Connoisseur 💎or Paper Hands Trader Money Bags 🏦 
-// O/U - Outperforming Index 📈 or Underperforming Index 📉 
-// E/C - Early OG 🌅 / Crowd Follower 🦶🏽
-// I/B - Indie Project Supporter 🆕  or Bluechip Projects Only   🔵
-
-// What does your wallet say about you? 
-
-// Want to meet others with similar personalities?  Want to learn from others who have different traits?  Mint a token here to connect to our Discord.
-
-
-// How do you compare in the Metaverse?
+// const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/c5cd7d6606b14d1b890801407356df7b:8545'))
 
 
 function App() {
@@ -37,6 +19,7 @@ function App() {
   let [showExplanation, setShowExplanation] = useState(false)
   let [message, setMessage] = useState('')
   let [metaMaskAddress, setMetaMaskAddress] = useState('')
+  let [stateContract, setStateContract] = useState(null)
 
   const truncateAccount = (addressList) => {
     
@@ -79,14 +62,48 @@ function App() {
     })
   }
 
-  const connectMetaMask = () => {
-    if(!window.ethereum){
+
+  // const connectMetaMask = () => {
+  //   if(!window.ethereum){
+  //     alert('No ethereum client detected, try MetaMask!')
+  //   }else {
+  //     window.ethereum.request({ method: 'eth_requestAccounts' }).then((addressList) => {
+  //       setUser(truncateAccount(addressList[0]))
+  //       setMetaMaskAddress(addressList[0])
+  //     })
+  //   }
+  // }
+
+  const loadBlockChainData = async () => {
+    if(!window.ethereum)
       alert('No ethereum client detected, try MetaMask!')
-    }else {
-      window.ethereum.request({ method: 'eth_requestAccounts' }).then((addressList) => {
-        setUser(truncateAccount(addressList[0]))
-        setMetaMaskAddress(addressList[0])
-      })
+    const web3 = new Web3(Web3.givenProvider)
+    let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    let user = accounts[0]
+    setUser(truncateAccount(user))
+    setMetaMaskAddress(user)
+
+    const networkId = await web3.eth.net.getId()
+    const networkData = CharismaNFT.networks[networkId]
+    console.log(networkId)
+    if(networkData) {
+      console.log(networkData)
+      const abi = CharismaNFT.abi
+      const contractAddress = networkData.address
+      let contract = await new web3.eth.Contract(abi, contractAddress);
+      if(contract){
+        console.log(contract)
+        setStateContract(contract)
+      }
+      else {
+        alert('Smart Contract Not Deployed To Network')
+      }
+    }
+  }
+
+  const mint = async () => {
+    if(stateContract){
+      await stateContract.methods.mint(wpi).send({from: metaMaskAddress})
     }
   }
 
@@ -104,7 +121,7 @@ function App() {
     
     }
     else {
-      setMessage('Please enter a valid Eth address')
+      setMessage('Please enter a valid ETH address')
       setClicked(true)
     }
   }
@@ -115,7 +132,7 @@ function App() {
 
   const handleMetaMaskClick = () => {
     if(!window.ethereum)
-      connectMetaMask()
+      loadBlockChainData()
     else
       navigator.clipboard.writeText(metaMaskAddress);
       alert('Address Copied')
@@ -125,7 +142,13 @@ function App() {
     console.log(address)
   }, [address])
 
-  useEffect(connectMetaMask, [])
+  useEffect(() => {
+    async function loadbcd(){
+      await loadBlockChainData()
+    }
+
+    loadbcd()
+  }, [])
 
 
   
@@ -161,6 +184,7 @@ function App() {
             )
           })}
         </div>
+        <button className={hidden ? "mint hidden" : "mint"} onClick={mint}>Mint as NFT</button>
       </section>
 
       <section className="legend">
@@ -195,14 +219,15 @@ function App() {
           <h1>How your results are Calculated</h1>
 
           <h2>D/P - Diamond Hands Connoisseur / Paper Hands Trader:</h2>
-          <p>If the ratio of sell transactions (outgoing transfer) to the number of buy transactions (incoming transfer) is 30% or less, then the wallet will receive the “D” attribute (💎). <br />
+          <p>
+            If the ratio of sell transactions (outgoing transfer) to the number of buy transactions (incoming transfer) is 30% or less, then the wallet will receive the “D” attribute (💎). <br />
             If it is greater than 30%, the wallet will receive the "P" attribute (🧻)
-
           </p>
           
           <h2>Outperforming Index / Underperforming Index:</h2>
-          <p>We're comparing the performance of the current NFT portfolio with the performance of ETH over the same time period.  Time period begins at the purchase date of the earliest NFT currently in the wallet until now. <br />
-          Performance of the current NFT portfolio is calculated as the difference between
+          <p>
+            We're comparing the performance of the current NFT portfolio with the performance of ETH over the same time period.  Time period begins at the purchase date of the earliest NFT currently in the wallet until now. <br />
+            Performance of the current NFT portfolio is calculated as the difference between
           
             <br />  
             <span>(1) the sum of the purchase price of the NFTs currently in wallet and</span>
@@ -210,24 +235,23 @@ function App() {
             <span>(2) the sum of the 7-day average sale price for each NFT. </span>
           
           
-          If the percentage performance of the current NFT portfolio is better than the percentage performance of ETH over the same time period, then the wallet will receive the “O” attribute (📈). <br />
-          If the percentage performance of the current NFT portfolio is worse than the percentage performance of ETH over the same time period, then the wallet will receive the “U” attribute (📉). <br />
+            If the percentage performance of the current NFT portfolio is better than the percentage performance of ETH over the same time period, then the wallet will receive the “O” attribute (📈). <br />
+            If the percentage performance of the current NFT portfolio is worse than the percentage performance of ETH over the same time period, then the wallet will receive the “U” attribute (📉). <br />
           </p>
           
           <h2>Early OG / Crowd Follower:</h2>
           <p>
-          The purchase of an NFT within 1 week of the project launch date is an indication that you are an early supporter of that project.  <br />
-          If the number of NFTs purchased within 1 week of project launch is 20% or more of the total number of NFTs that you have in the wallet, then the wallet will receive the “E” attribute (🌅). <br />
-          If the number of NFTs purchased within 1 week of project launch is less than 20% of the total number of NFTs that you have in the wallet, then the wallet will receive the “C” attribute (🦶🏽).
-
+            The purchase of an NFT within 1 week of the project launch date is an indication that you are an early supporter of that project.  <br />
+            If the number of NFTs purchased within 1 week of project launch is 20% or more of the total number of NFTs that you have in the wallet, then the wallet will receive the “E” attribute (🌅). <br />
+            If the number of NFTs purchased within 1 week of project launch is less than 20% of the total number of NFTs that you have in the wallet, then the wallet will receive the “C” attribute (🦶🏽).
           </p>
           
           <h2>Small Project Supporter / Bluechip Shark:</h2>
           <p>
-          We use the total trade volume as a proxy for how established an NFT project is.
-          “Small project” is defined as a project with a total trade volume of 2,000 ETH or less.  A “blue chip project” is defined as a project with a total trade volume of greater than 2,000 ETH. <br />
-          If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is equal to or greater than 50%, then the wallet will receive the “S” attribute (🐣). <br />
-          If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is less than 50%, then the wallet will receive the “B” attribute (🔵).
+            We use the total trade volume as a proxy for how established an NFT project is.
+            “Small project” is defined as a project with a total trade volume of 2,000 ETH or less.  A “blue chip project” is defined as a project with a total trade volume of greater than 2,000 ETH. <br />
+            If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is equal to or greater than 50%, then the wallet will receive the “S” attribute (🐣). <br />
+            If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is less than 50%, then the wallet will receive the “B” attribute (🔵).
 
           </p>
           

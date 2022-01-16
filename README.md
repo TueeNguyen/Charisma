@@ -35,8 +35,8 @@ This is the backend for the Charisma web application. It was built as part of NF
 
 ## Our Deployment
 We have deployed API on Microsoft Azure using AppService.
-Docs: https://charisma-api.azurewebsites.net/docs
-API URL: https://charisma-api.azurewebsites.net/
+- Docs: https://charisma-api.azurewebsites.net/docs
+- API URL: https://charisma-api.azurewebsites.net/
 
 
 ## Outstanding Items

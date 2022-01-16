@@ -3,6 +3,7 @@ import './App.css';
 import Web3 from 'web3';
 import React, { useState, useEffect } from 'react'
 import CharismaNFT from './abi/CharismaNFT.json'
+import { CircularProgress } from '@mui/material';
 const axios = require('axios').default
 
 
@@ -20,8 +21,8 @@ function App() {
   let [message, setMessage] = useState('')
   let [metaMaskAddress, setMetaMaskAddress] = useState('')
   let [stateContract, setStateContract] = useState(null)
+  let [loading, setLoading] = useState(false)
   let [minted, setMinted] = useState(false)
-
   const truncateAccount = (addressList) => {
     
     let str = addressList.split("")
@@ -58,6 +59,7 @@ function App() {
       setWpi(wpi)
       setTimeout(() => {
         setHidden(false)
+        setLoading(false)
       }, 500)
       
     })
@@ -82,7 +84,7 @@ function App() {
     const web3 = new Web3(Web3.givenProvider)
     let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     let user = accounts[0]
-    setUser(truncateAccount(user))
+    setUser(user)
     setMetaMaskAddress(user)
 
     const networkId = await web3.eth.net.getId()
@@ -121,8 +123,9 @@ function App() {
     if(address && address.length > 0 && /\s/.test(address) === false){
       setMessage('You are a...')
       setClicked(true)
+      setHidden(true)
+      setLoading(true)
       getData(address)
-    
     }
     else {
       setMessage('Please enter a valid ETH address')
@@ -163,7 +166,7 @@ function App() {
     <div className="App">
       <header className='header'>
         <h1>C<span id="blue">h</span></h1>
-        <p onClick={handleMetaMaskClick}>{user}</p>
+        <p onClick={handleMetaMaskClick}>{truncateAccount(user)}</p>
       </header>
       
       <section className="hero">
@@ -177,7 +180,9 @@ function App() {
       </section>
 
       <section className="present">
+
         <h1 className={!clicked ? 'hidden' : ''}>{message}</h1>
+        {loading ? <CircularProgress className='loading'/> : null}
         <div className="data">
           {/* Insights will show up here... */}
           {wpi.split("").map((e, index) => {
@@ -191,7 +196,7 @@ function App() {
             )
           })}
         </div>
-        <button className={hidden ? "mint hidden" : minted ? 'mint blocked' : 'mint '} disabled={minted} onClick={mint}>Mint as NFT</button>
+        {user === address ? <button className={hidden ? "mint hidden" : minted ? 'mint blocked' : 'mint '} disabled={minted} onClick={mint}>Mint as NFT</button> : null}
       </section>
 
       <section className="legend">

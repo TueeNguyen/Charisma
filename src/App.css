@@ -15,7 +15,7 @@ html{
 
 html, body, #root {
   height: 100%;
-  
+  /* overflow-x: hidden; */
 }
 
 .App {
@@ -23,7 +23,6 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   flex-direction: column; */
-  width: 100vw;
   min-height: 100%;
   text-align: center;
   background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
@@ -151,6 +150,7 @@ button:hover {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   column-gap: 1rem; 
+  transition: 1s all ease;
 }
 
 .letterCard{
@@ -241,7 +241,8 @@ button:hover {
   left: 1em;
   right: 0;
   width: 60%;
-  height: 80%;
+  /* height: 80%; */
+  min-height: 100%;
   margin: 10% auto;
   display: flex;
   align-items: center;
@@ -258,11 +259,13 @@ button:hover {
 }
 
 .explanation .wrapper {
+  padding: 3em;
   text-align: left;
+  /* overflow-y: scroll; */
 }
 
 .explanation .wrapper h1 {
-  font-size: 60px;
+  font-size: 40px;
   margin-bottom: 3rem;
 }
 
@@ -272,6 +275,10 @@ button:hover {
 
 .explanation .wrapper p {
   margin-bottom: 3rem;
+}
+
+.explanation .wrapper span{
+  margin-left: 1rem;
 }
 
 .explanation .wrapper button {

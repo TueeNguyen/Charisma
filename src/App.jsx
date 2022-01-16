@@ -2,6 +2,7 @@
 import './App.css';
 // import Web3 from 'web3';
 import React, { useState, useEffect } from 'react'
+const axios = require('axios').default
 
 
 
@@ -29,12 +30,16 @@ import React, { useState, useEffect } from 'react'
 function App() {
 
   let [user, setUser] = useState('Connect your wallet...')
+  let [address, setAddress] =  useState('')
   let [wpi, setWpi] = useState('')
   let [clicked, setClicked] = useState(false)
   let [hidden, setHidden] = useState(true)
   let [showExplanation, setShowExplanation] = useState(false)
+  let [message, setMessage] = useState('')
+  let [metaMaskAddress, setMetaMaskAddress] = useState('')
 
   const truncateAccount = (addressList) => {
+    
     let str = addressList.split("")
     let ret = "";
     for(var i = 0; i < 6; i++){
@@ -49,38 +54,86 @@ function App() {
     return ret
   }
 
+  const getData = (addr) => {
+    console.log('polling api for address: ' + addr)
+    //addr = '0x24daBabEE6BF5f221B64890E424609Ff43d6E148'
+    axios({
+      method: 'GET',
+      url: 'https://charisma-api.azurewebsites.net/address/' + addr
+    })
+    .then((response) => {
+      //console.log(response)
+
+      let wpi = ''
+      //console.log(response.data.dimensions)
+      for(const dimension in response.data.dimensions){
+        //console.log(response.data.dimensions[dimension].value)
+        wpi = wpi.concat(response.data.dimensions[dimension].value)
+      }
+      //console.log(wpi)
+      setWpi(wpi)
+      setTimeout(() => {
+        setHidden(false)
+      }, 500)
+      
+    })
+  }
+
   const connectMetaMask = () => {
     if(!window.ethereum){
       alert('No ethereum client detected, try MetaMask!')
     }else {
       window.ethereum.request({ method: 'eth_requestAccounts' }).then((addressList) => {
         setUser(truncateAccount(addressList[0]))
+        setMetaMaskAddress(addressList[0])
       })
     }
   }
+
+  const handleChange = (event) => {
+    // console.log(address)
+    setAddress(event.target.value)
+  }
   
   const handleClick = () => {
-      setWpi('DOES')
+    //check for whitespace or empty string
+    if(address && address.length > 0 && /\s/.test(address) === false){
+      setMessage('You are a...')
       setClicked(true)
-      setTimeout(() => {
-        console.log('unhiding cards', hidden)
-        setHidden(false)
-        
-      }, 1000)
+      getData(address)
+    
+    }
+    else {
+      setMessage('Please enter a valid Eth address')
+      setClicked(true)
+    }
   }
 
   const handleMoreInfoClick = () => {
     setShowExplanation(!showExplanation)
   }
 
+  const handleMetaMaskClick = () => {
+    if(!window.ethereum)
+      connectMetaMask()
+    else
+      navigator.clipboard.writeText(metaMaskAddress);
+      alert('Address Copied')
+  }
+
+  useEffect(() => {
+    console.log(address)
+  }, [address])
+
   useEffect(connectMetaMask, [])
-  
+
+
   
   return (
     <div className="App">
       <header className='header'>
         <h1>C<span id="blue">h</span></h1>
-        <p onClick={()=> connectMetaMask()}>{user}</p>
+        <p onClick={handleMetaMaskClick}>{user}</p>
       </header>
       
       <section className="hero">
@@ -89,12 +142,12 @@ function App() {
       </section>
 
       <section className="search">
-        <input type="text" placeholder="Wallet address here..."/>
+        <input value={address} onChange={handleChange} type="text" placeholder="Wallet address here..."/>
         <button onClick={handleClick}>{clicked ? 'Analyzed!' : 'Analyze'}</button>
       </section>
 
       <section className="present">
-        <h1 className={!clicked ? 'hidden' : ''}>You are a... </h1>
+        <h1 className={!clicked ? 'hidden' : ''}>{message}</h1>
         <div className="data">
           {/* Insights will show up here... */}
           {wpi.split("").map((e, index) => {
@@ -134,28 +187,60 @@ function App() {
         <button className='info' onClick={handleMoreInfoClick} href=".explanation">How are these values determined?</button>
       </section>
 
-      <footer className="footer">
-
-        <p>{"Developed with <3 By Joyce, Lexi, Dave, Tue & Alex at NFTHack2022"}</p>
-
-      </footer>
+      
 
       <section className={showExplanation ? "explanation" : "explanation hidden"}>
         <div className="wrapper">
           
           <h1>How your results are Calculated</h1>
-          <h2>Diamond Hands / Paper Hands:</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+
+          <h2>D/P - Diamond Hands Connoisseur / Paper Hands Trader:</h2>
+          <p>If the ratio of sell transactions (outgoing transfer) to the number of buy transactions (incoming transfer) is 30% or less, then the wallet will receive the “D” attribute (💎). <br />
+            If it is greater than 30%, the wallet will receive the "P" attribute (🧻)
+
+          </p>
+          
           <h2>Outperforming Index / Underperforming Index:</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <p>We're comparing the performance of the current NFT portfolio with the performance of ETH over the same time period.  Time period begins at the purchase date of the earliest NFT currently in the wallet until now. <br />
+          Performance of the current NFT portfolio is calculated as the difference between
+          
+            <br />  
+            <span>(1) the sum of the purchase price of the NFTs currently in wallet and</span>
+            <br />
+            <span>(2) the sum of the 7-day average sale price for each NFT. </span>
+          
+          
+          If the percentage performance of the current NFT portfolio is better than the percentage performance of ETH over the same time period, then the wallet will receive the “O” attribute (📈). <br />
+          If the percentage performance of the current NFT portfolio is worse than the percentage performance of ETH over the same time period, then the wallet will receive the “U” attribute (📉). <br />
+          </p>
+          
           <h2>Early OG / Crowd Follower:</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <p>
+          The purchase of an NFT within 1 week of the project launch date is an indication that you are an early supporter of that project.  <br />
+          If the number of NFTs purchased within 1 week of project launch is 20% or more of the total number of NFTs that you have in the wallet, then the wallet will receive the “E” attribute (🌅). <br />
+          If the number of NFTs purchased within 1 week of project launch is less than 20% of the total number of NFTs that you have in the wallet, then the wallet will receive the “C” attribute (🦶🏽).
+
+          </p>
+          
           <h2>Small Project Supporter / Bluechip Shark:</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, ut sunt. Doloremque exercitationem magni temporibus.</p>
+          <p>
+          We use the total trade volume as a proxy for how established an NFT project is.
+          “Small project” is defined as a project with a total trade volume of 2,000 ETH or less.  A “blue chip project” is defined as a project with a total trade volume of greater than 2,000 ETH. <br />
+          If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is equal to or greater than 50%, then the wallet will receive the “S” attribute (🐣). <br />
+          If the ratio of the number of small project NFTs compared to the number of blue chip project NFTs is less than 50%, then the wallet will receive the “B” attribute (🔵).
+
+          </p>
+          
           <button onClick={handleMoreInfoClick}>close</button>
         </div>
         
       </section>
+
+      <footer className="footer">
+
+        <p>{"Developed with <3 By Joyce, Lexi, Dave, Tue & Alex at NFTHack2022"}</p>
+
+      </footer>
     </div>
   );
 }

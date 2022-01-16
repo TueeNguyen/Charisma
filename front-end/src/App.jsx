@@ -22,7 +22,7 @@ function App() {
   let [metaMaskAddress, setMetaMaskAddress] = useState('')
   let [stateContract, setStateContract] = useState(null)
   let [loading, setLoading] = useState(false)
-
+  let [minted, setMinted] = useState(false)
   const truncateAccount = (addressList) => {
     
     let str = addressList.split("")
@@ -80,10 +80,11 @@ function App() {
   const loadBlockChainData = async () => {
     if(!window.ethereum)
       alert('No ethereum client detected, try MetaMask!')
+
     const web3 = new Web3(Web3.givenProvider)
     let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     let user = accounts[0]
-    setUser(truncateAccount(user))
+    setUser(user)
     setMetaMaskAddress(user)
 
     const networkId = await web3.eth.net.getId()
@@ -107,6 +108,8 @@ function App() {
   const mint = async () => {
     if(stateContract){
       await stateContract.methods.mint(wpi).send({from: metaMaskAddress})
+      console.log('Minted!')
+      setMinted(true)
     }
   }
 
@@ -135,11 +138,14 @@ function App() {
   }
 
   const handleMetaMaskClick = () => {
-    if(!window.ethereum)
+    //console.log(metaMaskAddress)
+    if(!metaMaskAddress)
       loadBlockChainData()
-    else
+    else{
       navigator.clipboard.writeText(metaMaskAddress);
       alert('Address Copied')
+    }
+      
   }
 
   useEffect(() => {
@@ -160,7 +166,7 @@ function App() {
     <div className="App">
       <header className='header'>
         <h1>C<span id="blue">h</span></h1>
-        <p onClick={handleMetaMaskClick}>{user}</p>
+        <p onClick={handleMetaMaskClick}>{truncateAccount(user)}</p>
       </header>
       
       <section className="hero">
@@ -176,7 +182,7 @@ function App() {
       <section className="present">
 
         <h1 className={!clicked ? 'hidden' : ''}>{message}</h1>
-        {loading ? <CircularProgress/> : null}
+        {loading ? <CircularProgress className='loading'/> : null}
         <div className="data">
           {/* Insights will show up here... */}
           {wpi.split("").map((e, index) => {
@@ -190,7 +196,7 @@ function App() {
             )
           })}
         </div>
-        <button className={hidden ? "mint hidden" : "mint"} onClick={mint}>Mint as NFT</button>
+        {user === address ? <button className={hidden ? "mint hidden" : minted ? 'mint blocked' : 'mint '} disabled={minted} onClick={mint}>Mint as NFT</button> : null}
       </section>
 
       <section className="legend">

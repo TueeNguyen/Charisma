@@ -3,6 +3,7 @@ import './App.css';
 import Web3 from 'web3';
 import React, { useState, useEffect } from 'react'
 import CharismaNFT from './abi/CharismaNFT.json'
+import { CircularProgress } from '@mui/material';
 const axios = require('axios').default
 
 
@@ -20,6 +21,7 @@ function App() {
   let [message, setMessage] = useState('')
   let [metaMaskAddress, setMetaMaskAddress] = useState('')
   let [stateContract, setStateContract] = useState(null)
+  let [loading, setLoading] = useState(false)
 
   const truncateAccount = (addressList) => {
     
@@ -57,6 +59,7 @@ function App() {
       setWpi(wpi)
       setTimeout(() => {
         setHidden(false)
+        setLoading(false)
       }, 500)
       
     })
@@ -117,8 +120,9 @@ function App() {
     if(address && address.length > 0 && /\s/.test(address) === false){
       setMessage('You are a...')
       setClicked(true)
+      setHidden(true)
+      setLoading(true)
       getData(address)
-    
     }
     else {
       setMessage('Please enter a valid ETH address')
@@ -170,7 +174,9 @@ function App() {
       </section>
 
       <section className="present">
+
         <h1 className={!clicked ? 'hidden' : ''}>{message}</h1>
+        {loading ? <CircularProgress/> : null}
         <div className="data">
           {/* Insights will show up here... */}
           {wpi.split("").map((e, index) => {

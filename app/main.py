@@ -4,9 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
-from datetime import datetime
+from datetime import datetime, date
 
-from app.etherscanAPI import getERC721Transactions
+from app.etherscanAPI import getERC721Transactions, getHistoricalEthPrice, getCurrentEthPrice
 from app.openseaAPI import getWalletNFTs, getNFTData, getCollectionsInWallet
 from app.config import opensea_key
 
@@ -86,8 +86,51 @@ def getDorP(walletAddress):
 
 
 def getOorU(walletAddress):
-    value = 'O'
-    userMessage = f"""Enter text description here"""
+    allNFTsFromOpenSea = getWalletNFTs(walletAddress)
+    allNFTsFromEtherScan = getERC721Transactions(walletAddress)
+    sumOfPurchasePrice = 0
+    sumOfSevenDayAverage = 0
+
+    for asset in allNFTsFromOpenSea['assets']:
+        nft = getNFTData(walletAddress, asset['asset_contract']['address'], asset['token_id'])
+        sevenDayAveragePrice = nft['collection']['stats']['seven_day_average_price']
+        purchasePrice = nft['collection']['payment_tokens'][0]['eth_price']
+        sumOfSevenDayAverage+=sevenDayAveragePrice
+        sumOfPurchasePrice+=purchasePrice
+    
+    performanceRate = sumOfSevenDayAverage - sumOfPurchasePrice / sumOfPurchasePrice
+        
+    historicalEthRate = 0
+    ethPriceAtTimeOfFirstMint = 0
+
+    for earliestNFTInWallet in allNFTsFromEtherScan['result']:
+        #unformatted timestamp format example - "timeStamp":"1512907118"
+        earliestNFTInWalletTimeStampUnformatted = earliestNFTInWallet['timeStamp']
+        #earliestNFTInWalletTimeStamp should be in YYYY-MM-DD  
+        earliestNFTInWalletTimeStamp = datetime.utcfromtimestamp(int(earliestNFTInWalletTimeStampUnformatted))
+  
+    currentDate = date.today()
+    
+    #This is an EtherScan API PRO Call, we need to replace with something else, currently using Current Price as Placeholder
+    #ethPriceAtTimeOfFirstMintResponse = getHistoricalEthPrice(startDate=earliestNFTInWalletTimeStamp.date(), currentDate=currentDate)
+    ethPriceAtTimeOfFirstMintResponse = getCurrentEthPrice()
+    ethPriceAtTimeOfFirstMint = float(ethPriceAtTimeOfFirstMintResponse['result']['ethusd'])
+    
+    currentEthPriceResponse = getCurrentEthPrice()
+    currentEthPrice = float(currentEthPriceResponse['result']['ethusd'])
+
+    historicalEthRate = currentEthPrice - ethPriceAtTimeOfFirstMint / ethPriceAtTimeOfFirstMint
+    if performanceRate < historicalEthRate:
+        performanceClassification = "Underperformed"
+        value = "U"
+    else:
+        performanceClassification = "Overperformed"
+        value = "O"  
+
+    userMessage = \
+        f"We analyzed all ERC721 transacations for this wallet and found the seven day average price of your NFT's - the purchase price / the sum of the seven " \
+        f"day average has given your wallet a {performanceRate} performance rate. When compared with the historical price of ETH of the same time period you have " \
+        f"been actively trading NTFs, you have {performanceClassification}"
 
     return {"value":value, "description": userMessage}
 

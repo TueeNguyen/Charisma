@@ -242,7 +242,7 @@ button:hover {
   right: 0;
   width: 60%;
   /* height: 80%; */
-  min-height: 100%;
+  min-height: 80%;
   margin: 10% auto;
   display: flex;
   align-items: center;

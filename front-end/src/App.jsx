@@ -3,26 +3,24 @@ import './App.css';
 import Web3 from 'web3';
 import React, { useState, useEffect } from 'react'
 import CharismaNFT from './abi/CharismaNFT.json'
-import { CircularProgress } from '@mui/material';
+//Components
+import Header from './components/header/Header'
+import SearchBar from './components/searchbar/SearchBar'
+import Present from './components/present/Present'
+
 const axios = require('axios').default
-
-
 // const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/c5cd7d6606b14d1b890801407356df7b:8545'))
 
 
 function App() {
-
-  let [user, setUser] = useState('Connect your wallet...')
-  let [address, setAddress] =  useState('')
   let [wpi, setWpi] = useState('')
-  let [clicked, setClicked] = useState(false)
-  let [hidden, setHidden] = useState(true)
-  let [showExplanation, setShowExplanation] = useState(false)
   let [message, setMessage] = useState('')
-  let [metaMaskAddress, setMetaMaskAddress] = useState('')
-  let [stateContract, setStateContract] = useState(null)
-  let [loading, setLoading] = useState(false)
-  let [minted, setMinted] = useState(false)
+  //display Bools
+  let [displayBools, setDisplayBools] = useState({clicked: false, hidden: true, showExplanation: false, loading: false})
+  //Web3 Data
+  let [web3Data, setWeb3Data] = useState({metaMaskAddress: '', stateContract: null, minted: false, address: ''})
+  let [internalAddress, setInternalAddress] = useState('')
+
   const truncateAccount = (addressList) => {
     
     let str = addressList.split("")
@@ -47,45 +45,35 @@ function App() {
       url: 'https://charisma-api.azurewebsites.net/address/' + addr
     })
     .then((response) => {
-      //console.log(response)
-
       let wpi = ''
-      //console.log(response.data.dimensions)
       for(const dimension in response.data.dimensions){
-        //console.log(response.data.dimensions[dimension].value)
         wpi = wpi.concat(response.data.dimensions[dimension].value)
       }
-      //console.log(wpi)
       setWpi(wpi)
       setTimeout(() => {
-        setHidden(false)
-        setLoading(false)
+        setDisplayBools(prevState => { return {...prevState, hidden: false, loading: false}})
       }, 500)
-      
+    })
+    .catch((error) => {
+      setTimeout(() => {
+        setDisplayBools(prevState => { return {...prevState, hidden: false, loading: false}})
+      }, 500)
+      setWpi('ABCD')
     })
   }
 
-
-  // const connectMetaMask = () => {
-  //   if(!window.ethereum){
-  //     alert('No ethereum client detected, try MetaMask!')
-  //   }else {
-  //     window.ethereum.request({ method: 'eth_requestAccounts' }).then((addressList) => {
-  //       setUser(truncateAccount(addressList[0]))
-  //       setMetaMaskAddress(addressList[0])
-  //     })
-  //   }
-  // }
-
   const loadBlockChainData = async () => {
-    if(!window.ethereum)
+    if(!window.ethereum){
       alert('No ethereum client detected, try MetaMask!')
+    }
+      
 
     const web3 = new Web3(Web3.givenProvider)
     let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     let user = accounts[0]
-    setUser(user)
-    setMetaMaskAddress(user)
+    
+    setWeb3Data(prevState => { return {...prevState, metaMaskAddress: user ? user : ''}})
+    // setMetaMaskAddress(user)
 
     const networkId = await web3.eth.net.getId()
     const networkData = CharismaNFT.networks[networkId]
@@ -93,11 +81,13 @@ function App() {
     if(networkData) {
       console.log(networkData)
       const abi = CharismaNFT.abi
+      console.log(abi)
       const contractAddress = networkData.address
       let contract = await new web3.eth.Contract(abi, contractAddress);
       if(contract){
         console.log(contract)
-        setStateContract(contract)
+        setWeb3Data(prevState => { return {...prevState, stateContract: contract}})
+        // setStateContract(contract)
       }
       else {
         alert('Smart Contract Not Deployed To Network')
@@ -106,51 +96,45 @@ function App() {
   }
 
   const mint = async () => {
-    if(stateContract){
-      await stateContract.methods.mint(wpi).send({from: metaMaskAddress})
+    if(web3Data.stateContract){
+      await web3Data.stateContract.methods.mint(wpi).send({from: web3Data.metaMaskAddress})
       console.log('Minted!')
-      setMinted(true)
+      setWeb3Data(prevState => { return {...prevState, minted: true}})
+      
     }
   }
 
-  const handleChange = (event) => {
-    // console.log(address)
-    setAddress(event.target.value)
+  const handleSearchChange = (event) => {
+    setWeb3Data(prevState => { return {...prevState, address:event.target.value}})
   }
   
-  const handleClick = () => {
+  const handleSearchClick = () => {
     //check for whitespace or empty string
-    if(address && address.length > 0 && /\s/.test(address) === false){
+    if(web3Data.address && web3Data.address.length > 0 && /\s/.test(web3Data.address) === false){
       setMessage('You are a...')
-      setClicked(true)
-      setHidden(true)
-      setLoading(true)
-      getData(address)
+      setDisplayBools(prevState => {return {...prevState, clicked: true, hidden: true, loading: true}})
+      getData(web3Data.address)
+      setInternalAddress(web3Data.address)
     }
     else {
       setMessage('Please enter a valid ETH address')
-      setClicked(true)
+      setDisplayBools(prevState => {return {...prevState, clicked: true}})
     }
   }
 
   const handleMoreInfoClick = () => {
-    setShowExplanation(!showExplanation)
+    setDisplayBools(prevState =>  {return {showExplanation: !prevState.showExplanation}})
   }
 
   const handleMetaMaskClick = () => {
-    //console.log(metaMaskAddress)
-    if(!metaMaskAddress)
+    if(!web3Data.metaMaskAddress)
       loadBlockChainData()
     else{
-      navigator.clipboard.writeText(metaMaskAddress);
+      navigator.clipboard.writeText(web3Data.metaMaskAddress);
       alert('Address Copied')
     }
       
   }
-
-  useEffect(() => {
-    console.log(address)
-  }, [address])
 
   useEffect(() => {
     async function loadbcd(){
@@ -160,44 +144,34 @@ function App() {
     loadbcd()
   }, [])
 
+  useEffect(() => {
+    
+  }, [displayBools.loading])
 
-  
   return (
     <div className="App">
-      <header className='header'>
-        <h1>C<span id="blue">h</span></h1>
-        <p onClick={handleMetaMaskClick}>{truncateAccount(user)}</p>
-      </header>
+      <Header handleMetaMaskClick={handleMetaMaskClick} user={web3Data.metaMaskAddress ? truncateAccount(web3Data.metaMaskAddress) : 'Connect Wallet'}/>
       
       <section className="hero">
         <h1>Charisma</h1>
         <p>What does your wallet say about <i>you</i>?</p>
       </section>
 
-      <section className="search">
-        <input value={address} onChange={handleChange} type="text" placeholder="Wallet address here..."/>
-        <button onClick={handleClick}>{clicked ? 'Analyzed!' : 'Analyze'}</button>
-      </section>
+      <SearchBar 
+        address={web3Data.address} 
+        handleSearchChange={handleSearchChange} 
+        handleSearchClick={handleSearchClick} 
+        clicked={displayBools.clicked}
+      />
 
-      <section className="present">
-
-        <h1 className={!clicked ? 'hidden' : ''}>{message}</h1>
-        {loading ? <CircularProgress className='loading'/> : null}
-        <div className="data">
-          {/* Insights will show up here... */}
-          {wpi.split("").map((e, index) => {
-            return (
-              <div className={hidden ? 'letterCard hidden' : 'letterCard'} key={index}>
-                <div className="letter" >
-                  <div className='attribute'>{e}</div>
-                  {/* <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos fuga, consectetur natus aperiam nesciunt inventore.</p> */}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        {user === address ? <button className={hidden ? "mint hidden" : minted ? 'mint blocked' : 'mint '} disabled={minted} onClick={mint}>Mint as NFT</button> : null}
-      </section>
+      <Present 
+        displayBools={displayBools}
+        web3Data={web3Data} 
+        address={internalAddress}
+        message={message} 
+        wpi={wpi} 
+        mint={mint}
+      />
 
       <section className="legend">
         <h1>What your result means:</h1>
@@ -223,9 +197,7 @@ function App() {
         <button className='info' onClick={handleMoreInfoClick} href=".explanation">How are these values determined?</button>
       </section>
 
-      
-
-      <section className={showExplanation ? "explanation" : "explanation hidden"}>
+      <section className={displayBools.showExplanation ? "explanation" : "explanation hidden"}>
         <div className="wrapper">
           
           <h1>How your results are Calculated</h1>

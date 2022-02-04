@@ -91,6 +91,7 @@ html, body, #root {
   width: 60%;
   font-size: 18px;
   color:#8e9497;
+  margin-bottom: 2em;
 }
 
 .search input::placeholder{
@@ -103,7 +104,7 @@ html, body, #root {
 
 button {
   display: block;
-  margin: 1em auto 0 auto;
+  margin: 0 auto 0 auto;
   background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   border: none;
   padding: 1rem 0;
@@ -125,23 +126,20 @@ button:hover {
 }
 
 .loading{
-  height: 400px;
+  height: 800px;
 }
 
-.present{
-  /* background-color: red; */
-  width: 50%;
-  min-height: 288px;
-  margin: auto;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-bottom: 3rem;
-}
 .present h1 {
   /* opacity: 0; */
   font-size: 80px;
   transition: all 0.2s ease;
+}
+
+.data-wrapper{
+  max-width: 950px;
+  min-height: 400px;
+  margin: auto;
+  /* background-color:red; */
 }
 
 .data {
@@ -152,7 +150,8 @@ button:hover {
   /* background-clip: text; */
   /* -webkit-text-fill-color: transparent; */
   /* background-color: orange; */
-  width: 30%;
+  width: fit-content;
+  margin: 0 auto;
   /* background-color: red; */
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -161,14 +160,29 @@ button:hover {
   transition: 1s all ease;
 }
 
+.button-wrapper{
+  min-height: 200px;
+}
+.button-wrapper button {
+  opacity: 0;
+  animation: fade-in .5s ease forwards;
+}
+
 .letterCard{
   /* width: 25%; */
+  opacity: 0;
+  width: 134px;
+  height: 128px;
   box-shadow: 0 0 3px 3px #00000026;
   border-radius: 3px;
   margin: .5rem 0;
   transition: all 1s ease;
   background-color: #fff;
-  
+  animation: fade-in .5s ease forwards;
+}
+
+.loading-circle{ 
+  height: 50px;
 }
 
 .letter{
@@ -195,10 +209,6 @@ button:hover {
   padding: 1rem;
   -webkit-text-fill-color: black;
   
-}
-
-.mint{
-  margin: 2rem;
 }
 
 .hidden {
@@ -295,4 +305,14 @@ button:hover {
 
 .explanation .wrapper button {
   -webkit-text-fill-color: #fff;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 1;
+  }
 }

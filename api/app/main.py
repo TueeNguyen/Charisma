@@ -114,21 +114,29 @@ def getOorU(walletAddress):
     
     #This is an EtherScan API PRO Call, we need to replace with something else, currently using Current Price as Placeholder
     #ethPriceAtTimeOfFirstMintResponse = getHistoricalEthPrice(startDate=earliestNFTInWalletTimeStamp.date(), currentDate=currentDate)
-    earliestDateString = str(earliestNFTInWalletTimeStamp.date().strftime("%d-%m-%Y"))
+    try:
+        earliestDateString = str(earliestNFTInWalletTimeStamp.date().strftime("%d-%m-%Y"))
+    except:
+        print("An exception occurred while trying to get earliestNFTInWalletTimeStamp")
     ethPriceAtTimeOfFirstMintResponse = getHistoricalEthPrice(dateString = earliestDateString)
     ethPriceAtTimeOfFirstMint = float(ethPriceAtTimeOfFirstMintResponse)
     #float(ethPriceAtTimeOfFirstMintResponse['result']['ethusd'])
-    
-    currentEthPriceResponse = getCurrentEthPrice()
-    currentEthPrice = float(currentEthPriceResponse['result']['ethusd'])
-
+    try:
+        currentEthPriceResponse = getCurrentEthPrice()
+        currentEthPrice = float(currentEthPriceResponse['result']['ethusd'])
+    except:
+        print("An exception occurred while trying to get the currrent eth price")
     historicalEthRate = currentEthPrice - ethPriceAtTimeOfFirstMint / ethPriceAtTimeOfFirstMint
     if performanceRate < historicalEthRate:
         performanceClassification = "Underperformed"
         value = "U"
-    else:
+    elif performanceRate > historicalEthRate:
         performanceClassification = "Overperformed"
-        value = "O"  
+        value = "O"
+    else:
+        print("Was not able to generate O/U ")
+      
+         
 
     userMessage = \
         f"We analyzed all ERC721 transacations for this wallet and found the seven day average price of your NFT's - the purchase price / the sum of the seven " \

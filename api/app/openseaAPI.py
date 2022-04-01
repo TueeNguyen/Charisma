@@ -6,7 +6,11 @@ def getWalletNFTs(walletAddress):
     url = "https://api.opensea.io/api/v1/assets"
 
     headers = {"Accept": "application/json", "X-API-KEY": opensea_key}
-    params = {"owner": walletAddress}
+    params = {
+        "owner": walletAddress, 
+        "limit": 50, 
+        "order_direction": "asc"
+    }
 
     response = requests.request("GET", url, headers=headers, params=params)
     #print(response.text)
